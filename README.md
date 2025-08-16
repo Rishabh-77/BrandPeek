@@ -1,4 +1,6 @@
-# Welcome to your Expo app 👋
+# BrandPeek 👋
+
+BrandPeek is a React Native mobile application built with Expo that provides a "Brand Discovery" experience. The app allows users to browse top brands, view detailed brand information, and interact with a clean, modern interface featuring custom gradient backgrounds.
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
@@ -10,7 +12,25 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Setup MockAPI Backend
+
+   Follow the detailed setup guide in `docs/mockapi-setup.md` to create your MockAPI project and populate it with brand data.
+
+   After setting up MockAPI, update the `BASE_URL` in `constants/api.js` with your project URL.
+
+3. Validate your setup
+
+   ```bash
+   npm run validate-setup
+   ```
+
+4. Test your API endpoints
+
+   ```bash
+   npm run test-api
+   ```
+
+5. Start the app
 
    ```bash
    npx expo start

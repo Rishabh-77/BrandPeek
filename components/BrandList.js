@@ -1,0 +1,294 @@
+import React, { useState, useCallback } from 'react';
+import {
+  View,
+  FlatList,
+  Text,
+  StyleSheet,
+  RefreshControl,
+  Pressable,
+  Dimensions,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import BrandCard from './BrandCard';
+import { colors } from '../constants/colors';
+import { typography } from '../constants/typography';
+import { gradients } from '../constants/gradients';
+
+const { height: screenHeight } = Dimensions.get('window');
+
+// Constants for performance optimization
+const ITEM_HEIGHT = 88; // BrandCard height + margins (updated for better spacing)
+const SKELETON_COUNT = 6;
+
+const BrandList = ({
+  brands = [],
+  loading = false,
+  error = null,
+  onRefresh,
+  onBrandPress,
+  testID = 'brand-list',
+}) => {
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Handle pull-to-refresh
+  const handleRefresh = useCallback(async () => {
+    if (onRefresh && !refreshing) {
+      setRefreshing(true);
+      try {
+        await onRefresh();
+      } finally {
+        setRefreshing(false);
+      }
+    }
+  }, [onRefresh, refreshing]);
+
+  // Optimized keyExtractor
+  const keyExtractor = useCallback((item, index) => {
+    return item?.id ? `brand-${item.id}` : `skeleton-${index}`;
+  }, []);
+
+  // Optimized getItemLayout for performance
+  const getItemLayout = useCallback(
+    (data, index) => ({
+      length: ITEM_HEIGHT,
+      offset: ITEM_HEIGHT * index,
+      index,
+    }),
+    []
+  );
+
+  // Render individual brand item
+  const renderBrandItem = useCallback(
+    ({ item, index }) => (
+      <BrandCard
+        brand={item}
+        onPress={onBrandPress}
+        testID={`${testID}-item-${index}`}
+      />
+    ),
+    [onBrandPress, testID]
+  );
+
+  // Generate skeleton data for loading state
+  const getSkeletonData = useCallback(() => {
+    return Array.from({ length: SKELETON_COUNT }, (_, index) => ({
+      id: `skeleton-${index}`,
+      skeleton: true,
+    }));
+  }, []);
+
+  // Empty state component
+  const EmptyState = () => (
+    <View style={styles.emptyContainer}>
+      <LinearGradient
+        colors={gradients.cardOverlay.config.colors}
+        locations={gradients.cardOverlay.config.locations}
+        start={gradients.cardOverlay.config.start}
+        end={gradients.cardOverlay.config.end}
+        style={styles.emptyCard}
+      >
+        <Text style={styles.emptyTitle}>No Brands Found</Text>
+        <Text style={styles.emptyDescription}>
+          We couldn&apos;t find any brands to display right now.
+        </Text>
+        {onRefresh && (
+          <Pressable
+            style={styles.emptyButton}
+            onPress={handleRefresh}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Refresh to try again"
+            testID={`${testID}-empty-refresh`}
+          >
+            <LinearGradient
+              colors={gradients.button.config.colors}
+              locations={gradients.button.config.locations}
+              start={gradients.button.config.start}
+              end={gradients.button.config.end}
+              style={styles.emptyButtonGradient}
+            >
+              <Text style={styles.emptyButtonText}>Try Again</Text>
+            </LinearGradient>
+          </Pressable>
+        )}
+      </LinearGradient>
+    </View>
+  );
+
+  // Error state component
+  const ErrorState = () => (
+    <View style={styles.errorContainer}>
+      <LinearGradient
+        colors={gradients.cardOverlay.config.colors}
+        locations={gradients.cardOverlay.config.locations}
+        start={gradients.cardOverlay.config.start}
+        end={gradients.cardOverlay.config.end}
+        style={styles.errorCard}
+      >
+        <Text style={styles.errorTitle}>Something went wrong</Text>
+        <Text style={styles.errorDescription}>
+          {error ||
+            'Unable to load brands. Please check your connection and try again.'}
+        </Text>
+        {onRefresh && (
+          <Pressable
+            style={styles.errorButton}
+            onPress={handleRefresh}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Retry loading brands"
+            testID={`${testID}-error-retry`}
+          >
+            <LinearGradient
+              colors={gradients.button.config.colors}
+              locations={gradients.button.config.locations}
+              start={gradients.button.config.start}
+              end={gradients.button.config.end}
+              style={styles.errorButtonGradient}
+            >
+              <Text style={styles.errorButtonText}>Retry</Text>
+            </LinearGradient>
+          </Pressable>
+        )}
+      </LinearGradient>
+    </View>
+  );
+
+  // Determine what data to show
+  const listData = loading ? getSkeletonData() : brands;
+
+  // Show error state if there's an error and no data
+  if (error && !loading && (!brands || brands.length === 0)) {
+    return <ErrorState />;
+  }
+
+  // Show empty state if no loading, no error, and no data
+  if (!loading && !error && (!brands || brands.length === 0)) {
+    return <EmptyState />;
+  }
+
+  return (
+    <FlatList
+      data={listData}
+      renderItem={renderBrandItem}
+      keyExtractor={keyExtractor}
+      getItemLayout={getItemLayout}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.listContainer}
+      refreshControl={
+        onRefresh ? (
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.text.secondary}
+            colors={[colors.primary.deepBlue]}
+            progressBackgroundColor={colors.background.secondary}
+            testID={`${testID}-refresh-control`}
+          />
+        ) : undefined
+      }
+      // Performance optimizations
+      removeClippedSubviews={true}
+      maxToRenderPerBatch={10}
+      updateCellsBatchingPeriod={50}
+      initialNumToRender={8}
+      windowSize={10}
+      // Accessibility
+      accessible={true}
+      accessibilityLabel="List of brands"
+      accessibilityHint="Scroll to browse brands, pull down to refresh"
+      testID={testID}
+    />
+  );
+};
+
+const styles = StyleSheet.create({
+  listContainer: {
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    flexGrow: 1,
+  },
+
+  // Empty state styles
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    minHeight: screenHeight * 0.6,
+  },
+  emptyCard: {
+    padding: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    maxWidth: 300,
+    width: '100%',
+  },
+  emptyTitle: {
+    ...typography.styles.header,
+    fontSize: 20,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  emptyDescription: {
+    ...typography.styles.description,
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 20,
+  },
+  emptyButton: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  emptyButtonGradient: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+  },
+  emptyButtonText: {
+    ...typography.styles.button,
+    textAlign: 'center',
+  },
+
+  // Error state styles
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    minHeight: screenHeight * 0.6,
+  },
+  errorCard: {
+    padding: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    maxWidth: 300,
+    width: '100%',
+  },
+  errorTitle: {
+    ...typography.styles.header,
+    fontSize: 20,
+    color: colors.interactive.error,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  errorDescription: {
+    ...typography.styles.description,
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 20,
+  },
+  errorButton: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  errorButtonGradient: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+  },
+  errorButtonText: {
+    ...typography.styles.button,
+    textAlign: 'center',
+  },
+});
+
+export default BrandList;

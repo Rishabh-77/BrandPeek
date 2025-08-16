@@ -21,7 +21,11 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "metro": {
+        "sourceMap": true,
+        "minify": false
+      }
     },
     "plugins": [
       "expo-router",
@@ -37,6 +41,10 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "metro": {
+      "sourceMap": true,
+      "minify": false
     }
   }
 }
