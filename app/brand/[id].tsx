@@ -94,7 +94,7 @@ export default function BrandDetailScreen() {
   // Show loading state
   if (loading) {
     return (
-      <GradientBackground variant="subtle">
+      <GradientBackground variant="primary">
         <SafeAreaView style={styles.safeArea}>
           <StatusBar
             barStyle="light-content"
@@ -113,7 +113,7 @@ export default function BrandDetailScreen() {
   // Show error state
   if (error) {
     return (
-      <GradientBackground variant="subtle">
+      <GradientBackground variant="primary">
         <SafeAreaView style={styles.safeArea}>
           <StatusBar
             barStyle="light-content"
@@ -130,7 +130,7 @@ export default function BrandDetailScreen() {
 
   // Main render with brand details
   return (
-    <GradientBackground variant="subtle">
+    <GradientBackground variant="primary">
       <SafeAreaView style={styles.safeArea}>
         <StatusBar
           barStyle="light-content"
