@@ -14,8 +14,7 @@ this app is taking 10 mock brand data form mockapi, Gradient has been implimente
    ```
 
 2. **Setup MockAPI Backend**
-   Follow the detailed setup guide in `docs/mockapi-setup.md` to create your MockAPI project and populate it with brand data.
-   After setting up MockAPI, update the `BASE_URL` in `constants/api.js` with your project URL.
+   Mock Api is already Setup
 
 3. **Validate your setup**
    ```bash
