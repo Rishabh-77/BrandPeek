@@ -7,7 +7,6 @@ import {
   ScrollView,
   Alert,
   StatusBar,
-  ActivityIndicator,
   Dimensions,
 } from 'react-native';
 import { Image } from 'expo-image';
@@ -18,7 +17,7 @@ import ErrorMessage from '@/components/ErrorMessage';
 import FollowButton from '@/components/FollowButton';
 import brandService from '@/services/brandService';
 import { typography } from '@/constants/typography';
-import { colors } from '@/constants/colors';
+import { colors } from '../../constants/colors.js';
 import { Brand } from '@/types/Brand';
 
 /**
@@ -51,19 +50,21 @@ export default function BrandDetailScreen() {
       setError(null);
 
       if (__DEV__) {
-        console.log(`[BrandDetailScreen] Fetching brand details for ID: ${id}`);
+        console.log('Fetching brand details for ID:', id);
       }
 
       const brandData = await brandService.getBrandById(id as string);
-      setBrand(brandData);
+      setBrand(brandData as Brand);
 
       if (__DEV__) {
         console.log(
-          `[BrandDetailScreen] Successfully loaded brand: ${brandData.name}`
+          'Brand data loaded successfully:',
+          (brandData as any)?.name
         );
       }
     } catch (err: any) {
       if (__DEV__) {
+        
       }
 
       const errorMessage =
@@ -102,7 +103,7 @@ export default function BrandDetailScreen() {
             translucent
           />
           <View style={styles.loadingContainer}>
-            <LoadingSpinner size={60} />
+            <LoadingSpinner size={60} style={styles.spinnerStyle} />
             <Text style={styles.loadingText}>Loading brand details...</Text>
           </View>
         </SafeAreaView>
@@ -121,7 +122,11 @@ export default function BrandDetailScreen() {
             translucent
           />
           <View style={styles.errorContainer}>
-            <ErrorMessage message={error} onRetry={handleRetry} />
+            <ErrorMessage
+              message={error || ''}
+              onRetry={handleRetry}
+              style={styles.errorMessageStyle}
+            />
           </View>
         </SafeAreaView>
       </GradientBackground>
@@ -152,8 +157,11 @@ export default function BrandDetailScreen() {
                   source={{ uri: brand.logo }}
                   style={styles.logo}
                   contentFit="contain"
-                  transition={200}
+                  transition={300}
                   placeholder={null}
+                  cachePolicy="memory-disk"
+                  priority="high"
+                  recyclingKey={brand.id}
                   accessible={true}
                   accessibilityLabel={`${brand.name} logo`}
                 />
@@ -220,11 +228,10 @@ export default function BrandDetailScreen() {
           {/* Follow Button */}
           <View style={styles.actionContainer}>
             <FollowButton
-              onPress={isFollowing => {
-                if (__DEV__) {
-                }
+              onPress={() => {
                 // Visual feedback only - no actual follow logic needed per requirements
               }}
+              style={styles.followButtonStyle}
               testID="brand-detail-follow-button"
             />
           </View>
@@ -253,7 +260,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.normal,
+    fontWeight: '400',
     color: colors.text.primary,
     lineHeight: typography.lineHeight.relaxed * typography.fontSize.base,
     marginTop: 16,
@@ -302,13 +309,13 @@ const styles = StyleSheet.create({
   },
   logoFallbackText: {
     fontSize: Math.min(48, Dimensions.get('window').width * 0.12),
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: '#FFFFFF', // colors.text.primary
     textAlign: 'center',
   },
   brandName: {
     fontSize: 32,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: colors.text.primary,
     lineHeight: 40,
     textAlign: 'center',
@@ -316,7 +323,7 @@ const styles = StyleSheet.create({
   },
   category: {
     fontSize: 16,
-    fontWeight: typography.fontWeight.normal,
+    fontWeight: '400',
     color: colors.text.secondary,
     lineHeight: typography.lineHeight.relaxed * 16,
     textAlign: 'center',
@@ -332,20 +339,20 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: typography.fontWeight.semiBold,
+    fontWeight: '600',
     color: colors.text.primary,
     lineHeight: typography.lineHeight.tight * 20,
     marginBottom: 12,
   },
   description: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.normal,
+    fontWeight: '400',
     color: colors.text.primary,
     lineHeight: 24,
   },
   fullDescription: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.normal,
+    fontWeight: '400',
     color: colors.text.primary,
     lineHeight: 24,
     opacity: 0.9,
@@ -356,14 +363,14 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: typography.fontSize.base,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: colors.text.primary,
     lineHeight: typography.lineHeight.relaxed * typography.fontSize.base,
     width: 120,
   },
   infoValue: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.normal,
+    fontWeight: '400',
     color: colors.text.primary,
     lineHeight: typography.lineHeight.relaxed * typography.fontSize.base,
     flex: 1,
@@ -371,7 +378,7 @@ const styles = StyleSheet.create({
   },
   website: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.normal,
+    fontWeight: '400',
     color: colors.primary.darkBlue,
     lineHeight: typography.lineHeight.relaxed * typography.fontSize.base,
     textDecorationLine: 'underline',
@@ -381,5 +388,15 @@ const styles = StyleSheet.create({
     marginBottom: 24, // Added bottom margin for better spacing
     paddingVertical: 16, // Added vertical padding
     alignItems: 'center',
+  },
+  spinnerStyle: {
+    alignSelf: 'center',
+  },
+  errorMessageStyle: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  followButtonStyle: {
+    alignSelf: 'center',
   },
 });

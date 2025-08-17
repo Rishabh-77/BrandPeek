@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Animated, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
+import { AnimationUtils } from '../utils/animations';
 
 const LoadingSpinner = ({
   size = 40,
@@ -10,23 +11,13 @@ const LoadingSpinner = ({
   const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const spinAnimation = Animated.loop(
-      Animated.timing(spinValue, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,
-      })
-    );
-
+    const spinAnimation = AnimationUtils.rotate(spinValue, 1200);
     spinAnimation.start();
 
     return () => spinAnimation.stop();
   }, [spinValue]);
 
-  const spin = spinValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
+  const spin = AnimationUtils.interpolateRotation(spinValue);
 
   return (
     <View

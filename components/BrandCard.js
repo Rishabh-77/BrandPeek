@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import {
   View,
   Text,
@@ -26,8 +26,18 @@ const BrandCard = ({ brand, onPress, testID }) => {
   const [isPressed, setIsPressed] = useState(false);
 
   const handlePress = async () => {
-    // Provide haptic feedback
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Provide enhanced haptic feedback
+    try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      // Add a subtle selection feedback after a short delay
+      setTimeout(() => {
+        Haptics.selectionAsync();
+      }, 50);
+    } catch (_error) {
+      // Haptic feedback not available on this device
+      if (__DEV__) {
+      }
+    }
 
     if (onPress && brand) {
       onPress(brand);
@@ -124,7 +134,10 @@ const BrandCard = ({ brand, onPress, testID }) => {
                 onError={handleImageError}
                 placeholder={null}
                 contentFit="contain"
-                transition={200}
+                transition={300}
+                cachePolicy="memory-disk"
+                priority="high"
+                recyclingKey={brand.id}
                 accessible={true}
                 accessibilityLabel={`${brand.name} logo`}
               />
@@ -275,4 +288,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BrandCard;
+export default memo(BrandCard);

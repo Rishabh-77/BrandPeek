@@ -37,6 +37,10 @@ export default function RootLayout() {
             headerTitleStyle: {
               fontWeight: '600',
             },
+            animation: 'slide_from_right',
+            animationDuration: 300,
+            gestureEnabled: true,
+            gestureDirection: 'horizontal',
           }}
         />
         <Stack.Screen name="+not-found" />

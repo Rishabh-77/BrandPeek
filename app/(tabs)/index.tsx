@@ -6,7 +6,6 @@ import {
   SafeAreaView,
   Alert,
   StatusBar,
-  Dimensions,
 } from 'react-native';
 import { router } from 'expo-router';
 import GradientBackground from '@/components/GradientBackground';
@@ -16,7 +15,8 @@ import ErrorMessage from '@/components/ErrorMessage';
 import FloatingHeader from '@/components/FloatingHeader';
 import brandService from '@/services/brandService';
 import { typography } from '@/constants/typography';
-// import { colors } from '@/constants/colors';
+import { Brand } from '@/types/Brand';
+import imageCache from '@/utils/imageCache';
 
 /**
  * HomeScreen - Main screen displaying the brand discovery interface
@@ -30,9 +30,9 @@ import { typography } from '@/constants/typography';
  */
 export default function HomeScreen() {
   // State management for brands data and UI states
-  const [brands, setBrands] = useState([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   /**
@@ -52,6 +52,11 @@ export default function HomeScreen() {
       const brandsData = await brandService.getBrands();
       setBrands(brandsData);
 
+      // Preload brand images for better performance
+      if (brandsData.length > 0) {
+        imageCache.preloadBrandLogos(brandsData);
+      }
+
       if (__DEV__) {
       }
     } catch (err) {
@@ -59,7 +64,7 @@ export default function HomeScreen() {
       }
 
       const errorMessage =
-        err.message || 'Failed to load brands. Please try again.';
+        (err as Error).message || 'Failed to load brands. Please try again.';
       setError(errorMessage);
 
       // Show alert for critical errors (not during refresh)
@@ -87,9 +92,9 @@ export default function HomeScreen() {
 
   /**
    * Handle brand selection and navigation to detail screen
-   * @param {Object} brand - Selected brand object
+   * @param {Brand} brand - Selected brand object
    */
-  const handleBrandPress = useCallback(brand => {
+  const handleBrandPress = useCallback((brand: Brand) => {
     if (!brand || !brand.id) {
       if (__DEV__) {
       }
@@ -131,7 +136,7 @@ export default function HomeScreen() {
             translucent
           />
           <View style={styles.loadingContainer}>
-            <LoadingSpinner size="large" />
+            <LoadingSpinner size={60} style={{}} />
             <Text style={styles.loadingText}>Loading brands...</Text>
           </View>
         </SafeAreaView>
@@ -151,9 +156,9 @@ export default function HomeScreen() {
           />
           <View style={styles.errorContainer}>
             <ErrorMessage
-              message={error}
+              message={error || ''}
               onRetry={handleRetry}
-              testID="home-screen-error"
+              style={{}}
             />
           </View>
         </SafeAreaView>
@@ -178,7 +183,7 @@ export default function HomeScreen() {
           <BrandList
             brands={brands}
             loading={refreshing}
-            error={error}
+            error={error || undefined}
             onRefresh={handleRefresh}
             onBrandPress={handleBrandPress}
             testID="home-screen-brand-list"
@@ -209,9 +214,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   loadingText: {
-    ...typography.styles.body,
+    fontSize: typography.fontSize.base,
+    fontWeight: '400' as const,
+    color: typography.styles.body.color,
+    lineHeight: typography.lineHeight.relaxed * typography.fontSize.base,
     marginTop: 16,
-    textAlign: 'center',
+    textAlign: 'center' as const,
     opacity: 0.8,
   },
   errorContainer: {

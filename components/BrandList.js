@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, memo, useEffect } from 'react';
 import {
   View,
   FlatList,
@@ -13,6 +13,9 @@ import BrandCard from './BrandCard';
 import { colors } from '../constants/colors';
 import { typography } from '../constants/typography';
 import { gradients } from '../constants/gradients';
+import { ListOptimization } from '../utils/listOptimization';
+import imageCache from '../utils/imageCache';
+import performanceMonitor from '../utils/performanceMonitor';
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -29,6 +32,18 @@ const BrandList = ({
   testID = 'brand-list',
 }) => {
   const [refreshing, setRefreshing] = useState(false);
+
+  // Preload brand images for better performance
+  useEffect(() => {
+    if (brands.length > 0) {
+      performanceMonitor.measure('preload-brand-logos', () => {
+        return imageCache.preloadBrandLogos(brands);
+      });
+    }
+  }, [brands]);
+
+  // Performance monitoring for FlatList
+  const flatListMonitoring = performanceMonitor.monitorFlatList('brand-list');
 
   // Handle pull-to-refresh
   const handleRefresh = useCallback(async () => {
@@ -47,13 +62,16 @@ const BrandList = ({
     return item?.id ? `brand-${item.id}` : `skeleton-${index}`;
   }, []);
 
+  // Get optimized performance settings
+  const performanceSettings = ListOptimization.getOptimalSettings(
+    ITEM_HEIGHT,
+    brands.length
+  );
+  const viewabilityConfig = ListOptimization.getViewabilityConfig();
+
   // Optimized getItemLayout for performance
   const getItemLayout = useCallback(
-    (data, index) => ({
-      length: ITEM_HEIGHT,
-      offset: ITEM_HEIGHT * index,
-      index,
-    }),
+    ListOptimization.getItemLayout(ITEM_HEIGHT, 0),
     []
   );
 
@@ -199,11 +217,20 @@ const BrandList = ({
         ) : undefined
       }
       // Performance optimizations
-      removeClippedSubviews={true}
-      maxToRenderPerBatch={10}
-      updateCellsBatchingPeriod={50}
-      initialNumToRender={8}
-      windowSize={10}
+      {...performanceSettings}
+      viewabilityConfig={viewabilityConfig}
+      onViewableItemsChanged={null}
+      maintainVisibleContentPosition={{
+        minIndexForVisible: 0,
+        autoscrollToTopThreshold: 10,
+      }}
+      scrollEventThrottle={16}
+      decelerationRate="fast"
+      // Performance monitoring
+      onScrollBeginDrag={flatListMonitoring.onScrollBeginDrag}
+      onScrollEndDrag={flatListMonitoring.onScrollEndDrag}
+      onMomentumScrollBegin={flatListMonitoring.onMomentumScrollBegin}
+      onMomentumScrollEnd={flatListMonitoring.onMomentumScrollEnd}
       // Accessibility
       accessible={true}
       accessibilityLabel="List of brands"
@@ -321,4 +348,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BrandList;
+export default memo(BrandList);

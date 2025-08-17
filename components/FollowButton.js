@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
-import colors from '../constants/colors';
-import typography from '../constants/typography';
+import { colors } from '../constants/colors';
+import { typography } from '../constants/typography';
 
 const { width } = Dimensions.get('window');
 
@@ -26,18 +26,20 @@ const FollowButton = ({
   const handlePressIn = () => {
     setIsPressed(true);
 
-    Animated.timing(scaleValue, {
+    Animated.spring(scaleValue, {
       toValue: 0.95,
-      duration: 100,
+      tension: 300,
+      friction: 10,
       useNativeDriver: true,
     }).start();
   };
 
   const handlePressOut = () => {
     setIsPressed(false);
-    Animated.timing(scaleValue, {
+    Animated.spring(scaleValue, {
       toValue: 1,
-      duration: 100,
+      tension: 300,
+      friction: 10,
       useNativeDriver: true,
     }).start();
   };
@@ -45,13 +47,22 @@ const FollowButton = ({
   const handlePress = async () => {
     if (disabled) return;
 
-    // Provide haptic feedback on button press
+    // Provide enhanced haptic feedback on button press
     try {
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    } catch (error) {
+      if (isFollowing) {
+        // Light feedback for unfollowing
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } else {
+        // Medium feedback for following
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        // Add a subtle success notification
+        setTimeout(() => {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }, 100);
+      }
+    } catch (_error) {
       // Haptic feedback not available on this device
       if (__DEV__) {
-        console.log('Haptic feedback not available:', error);
       }
     }
 
