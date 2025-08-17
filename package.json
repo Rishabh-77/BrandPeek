@@ -17,9 +17,17 @@
     "validate-services": "node scripts/validate-services.js",
     "clear-cache": "expo start --clear",
     "reset-metro": "npx expo start --clear --reset-cache",
-    "fix-metro": "node scripts/fix-metro-errors.js"
+    "fix-metro": "node scripts/fix-metro-errors.js",
+    "publish": "npx expo publish",
+    "build:android": "npx expo build:android",
+    "build:ios": "npx expo build:ios",
+    "build:web": "npx expo build:web",
+    "deploy": "node scripts/share-app.js",
+    "share": "node scripts/share-app.js",
+    "tunnel": "npx expo start --tunnel"
   },
   "dependencies": {
+    "@expo/cli": "^0.24.20",
     "@expo/vector-icons": "^14.1.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
@@ -47,9 +55,9 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
+    "react-native-svg": "15.11.2",
     "react-native-web": "~0.20.0",
-    "react-native-webview": "13.13.5",
-    "react-native-svg": "15.11.2"
+    "react-native-webview": "13.13.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

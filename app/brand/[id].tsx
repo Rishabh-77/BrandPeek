@@ -64,7 +64,6 @@ export default function BrandDetailScreen() {
       }
     } catch (err: any) {
       if (__DEV__) {
-        
       }
 
       const errorMessage =

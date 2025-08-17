@@ -106,7 +106,6 @@ export default function HomeScreen() {
     }
 
     // Navigate to brand detail screen with brand ID
-    // Note: This will be implemented when BrandDetailScreen is created
     router.push({
       pathname: '/brand/[id]',
       params: { id: brand.id, name: brand.name },
