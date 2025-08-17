@@ -37,3 +37,43 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+# Documentation and development files
+docs/
+*.md
+!README.md
+
+# Example and test files
+*.example.js
+*.example.tsx
+scripts/test-*.js
+scripts/validate-*.js
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+logs/
+*.log
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# Build artifacts
+build/
+out/
