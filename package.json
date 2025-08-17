@@ -24,7 +24,10 @@
     "build:web": "npx expo build:web",
     "deploy": "node scripts/share-app.js",
     "share": "node scripts/share-app.js",
-    "tunnel": "npx expo start --tunnel"
+    "tunnel": "npx expo start --tunnel",
+    "demo-info": "node scripts/get-demo-links.js",
+    "publish-permanent": "node scripts/permanent-share.js",
+    "export-web": "npx expo export -p web"
   },
   "dependencies": {
     "@expo/cli": "^0.24.20",

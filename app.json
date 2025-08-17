@@ -10,7 +10,11 @@
     "newArchEnabled": true,
     "description": "A React Native app for discovering top brands with beautiful gradient backgrounds and modern UI design.",
     "privacy": "public",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "githubUrl": "https://github.com/brandpeek/brandpeek-app",
     "splash": {
       "image": "./assets/images/splash-icon.png",
@@ -67,6 +71,12 @@
     },
     "runtimeVersion": {
       "policy": "sdkVersion"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "93abf7dc-52f3-40f1-a53c-ef1f08710d79"
+      }
     }
   }
 }
