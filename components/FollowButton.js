@@ -7,6 +7,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
 import colors from '../constants/colors';
 import typography from '../constants/typography';
 
@@ -24,6 +25,12 @@ const FollowButton = ({
 
   const handlePressIn = () => {
     setIsPressed(true);
+
+    // Add haptic feedback when pressing down on the button
+    if (process.env.EXPO_OS === 'ios') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+
     Animated.timing(scaleValue, {
       toValue: 0.95,
       duration: 100,

@@ -165,7 +165,7 @@ export default function BrandDetailScreen() {
                 </View>
               )}
             </View>
-            
+
             <Text style={styles.brandName}>{brand?.name || name}</Text>
             {brand?.category && (
               <Text style={styles.category}>{brand.category}</Text>
@@ -222,7 +222,6 @@ export default function BrandDetailScreen() {
             <FollowButton
               onPress={isFollowing => {
                 if (__DEV__) {
-                  
                 }
                 // Visual feedback only - no actual follow logic needed per requirements
               }}

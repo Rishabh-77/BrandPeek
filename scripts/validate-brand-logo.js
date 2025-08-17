@@ -17,8 +17,8 @@ const checks = [
   {
     name: 'Brand detail [id].tsx exists',
     path: brandDetailPath,
-    required: true
-  }
+    required: true,
+  },
 ];
 
 let allPassed = true;
@@ -27,7 +27,7 @@ checks.forEach(check => {
   const exists = fs.existsSync(check.path);
   const status = exists ? '✅' : '❌';
   console.log(`${status} ${check.name}`);
-  
+
   if (!exists && check.required) {
     allPassed = false;
   }
@@ -38,18 +38,58 @@ console.log('\n🎨 Brand Logo Implementation:');
 // Check brand detail logo implementation
 if (fs.existsSync(brandDetailPath)) {
   const brandDetailContent = fs.readFileSync(brandDetailPath, 'utf8');
-  
+
   const logoFeatures = [
-    { name: 'Image component imported', pattern: /import.*Image.*expo-image/, shouldExist: true },
-    { name: 'Dimensions imported for responsive sizing', pattern: /Dimensions,/, shouldExist: true },
-    { name: 'Logo container in header', pattern: /styles\.logoContainer/, shouldExist: true },
-    { name: 'Brand logo image display', pattern: /brand\?\.logo.*\?/, shouldExist: true },
-    { name: 'Logo fallback implementation', pattern: /logoFallback/, shouldExist: true },
-    { name: 'Responsive logo sizing', pattern: /Math\.min.*Dimensions\.get.*width/, shouldExist: true },
-    { name: 'Logo accessibility label', pattern: /accessibilityLabel.*logo/, shouldExist: true },
-    { name: 'Logo container styling', pattern: /logoContainer:/, shouldExist: true },
-    { name: 'Logo fallback styling', pattern: /logoFallback:/, shouldExist: true },
-    { name: 'Shadow effects for logo', pattern: /shadowColor/, shouldExist: true }
+    {
+      name: 'Image component imported',
+      pattern: /import.*Image.*expo-image/,
+      shouldExist: true,
+    },
+    {
+      name: 'Dimensions imported for responsive sizing',
+      pattern: /Dimensions,/,
+      shouldExist: true,
+    },
+    {
+      name: 'Logo container in header',
+      pattern: /styles\.logoContainer/,
+      shouldExist: true,
+    },
+    {
+      name: 'Brand logo image display',
+      pattern: /brand\?\.logo.*\?/,
+      shouldExist: true,
+    },
+    {
+      name: 'Logo fallback implementation',
+      pattern: /logoFallback/,
+      shouldExist: true,
+    },
+    {
+      name: 'Responsive logo sizing',
+      pattern: /Math\.min.*Dimensions\.get.*width/,
+      shouldExist: true,
+    },
+    {
+      name: 'Logo accessibility label',
+      pattern: /accessibilityLabel.*logo/,
+      shouldExist: true,
+    },
+    {
+      name: 'Logo container styling',
+      pattern: /logoContainer:/,
+      shouldExist: true,
+    },
+    {
+      name: 'Logo fallback styling',
+      pattern: /logoFallback:/,
+      shouldExist: true,
+    },
+    {
+      name: 'Shadow effects for logo',
+      pattern: /shadowColor/,
+      shouldExist: true,
+    },
   ];
 
   logoFeatures.forEach(feature => {
@@ -57,7 +97,7 @@ if (fs.existsSync(brandDetailPath)) {
     const passed = feature.shouldExist ? found : !found;
     const status = passed ? '✅' : '❌';
     console.log(`${status} BrandDetail: ${feature.name}`);
-    
+
     if (!passed) {
       allPassed = false;
     }
@@ -74,7 +114,7 @@ const features = [
   '✅ Proper accessibility labels for screen readers',
   '✅ Smooth image loading with transitions',
   '✅ Consistent with brand card logo styling',
-  '✅ Optimized for different screen sizes'
+  '✅ Optimized for different screen sizes',
 ];
 
 features.forEach(feature => console.log(feature));
@@ -87,7 +127,7 @@ const improvements = [
   '✅ Consistent branding throughout the app',
   '✅ Better visual hierarchy with logo prominence',
   '✅ Fallback ensures always showing brand representation',
-  '✅ Responsive design works across all devices'
+  '✅ Responsive design works across all devices',
 ];
 
 improvements.forEach(improvement => console.log(improvement));
@@ -100,7 +140,7 @@ const technical = [
   '✅ Proper fallback handling for missing logos',
   '✅ Shadow effects for visual depth',
   '✅ Accessibility compliance with proper labels',
-  '✅ Smooth transitions and loading states'
+  '✅ Smooth transitions and loading states',
 ];
 
 technical.forEach(tech => console.log(tech));
