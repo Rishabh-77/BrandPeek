@@ -10,7 +10,7 @@ interface GradientConfig {
 
 interface GradientDefinition {
   type: 'radial' | 'linear';
-  colors: string[];
+  colors: (string | ColorValue)[];
   locations: number[];
   center?: number[];
   radius?: number;
@@ -21,17 +21,18 @@ interface GradientDefinition {
 }
 
 export const gradients: Record<string, GradientDefinition> = {
-  // Primary radial gradient for home screen - matches reference image exactly
+  // Primary gradient for home screen - updated to match the reference image
   primary: {
-    type: 'radial',
-    colors: ['#4A90E2', '#2E5BBA', '#1A2B5C', '#0A0E1A'],
-    locations: [0, 0.3, 0.7, 1],
-    center: [0.5, 0.5], // True center positioning
-    radius: 1.2,
-    // For expo-linear-gradient RadialGradient simulation
+    type: 'linear',
+    colors: ['#2B3C8F', '#10194E', '#06071B'],
+    locations: [0, 0.3, 1],
+    start: { x: 0.5, y: 0 },
+    end: { x: 0.5, y: 1 },
     config: {
-      colors: ['#4A90E2', '#2E5BBA', '#1A2B5C', '#0A0E1A'],
-      locations: [0, 0.3, 0.7, 1],
+      colors: ['#2B3C8F', '#10194E', '#06071B'],
+      locations: [0, 0.3, 1],
+      start: { x: 0.5, y: 0 },
+      end: { x: 0.5, y: 1 },
     },
   },
 
