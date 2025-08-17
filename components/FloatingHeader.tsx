@@ -1,82 +1,38 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  StatusBar,
-  Platform,
-} from 'react-native';
-import { BlurView } from 'expo-blur';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { colors } from '../constants/colors';
+import { typography } from '../constants/typography';
+import { gradients } from '../constants/gradients';
+
+const { width: screenWidth } = Dimensions.get('window');
+
+// Match BrandCard margins
+const HEADER_MARGIN = 12; // Horizontal margin for the header card
 
 interface FloatingHeaderProps {
   title?: string;
-  showBackButton?: boolean;
-  onBackPress?: () => void;
-  rightComponent?: React.ReactNode;
-  backgroundColor?: string;
-  textColor?: string;
-  blurIntensity?: number;
 }
 
 export default function FloatingHeader({
-  title = '',
-  showBackButton = true,
-  onBackPress,
-  rightComponent,
-  backgroundColor = 'rgba(255, 255, 255, 0.9)',
-  textColor = '#000',
-  blurIntensity = 80,
+  title = 'BrandPeek',
 }: FloatingHeaderProps) {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
-
-  const handleBackPress = () => {
-    if (onBackPress) {
-      onBackPress();
-    } else {
-      router.back();
-    }
-  };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <BlurView
-        intensity={blurIntensity}
-        tint="light"
-        style={[styles.blurContainer, { backgroundColor }]}
+      <LinearGradient
+        colors={gradients.cardOverlay.config.colors}
+        locations={gradients.cardOverlay.config.locations}
+        start={gradients.cardOverlay.config.start}
+        end={gradients.cardOverlay.config.end}
+        style={styles.gradient}
       >
-        <View style={styles.headerContent}>
-          {showBackButton && (
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={handleBackPress}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name="chevron-back"
-                size={24}
-                color={textColor}
-              />
-            </TouchableOpacity>
-          )}
-          
-          <Text
-            style={[styles.title, { color: textColor }]}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            {title}
-          </Text>
-          
-          <View style={styles.rightContainer}>
-            {rightComponent}
-          </View>
+        <View style={styles.content}>
+          <Text style={styles.title}>{title}</Text>
         </View>
-      </BlurView>
+      </LinearGradient>
     </View>
   );
 }
@@ -89,33 +45,35 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 1000,
   },
-  blurContainer: {
+  gradient: {
+    marginHorizontal: HEADER_MARGIN, // Add horizontal margins like BrandCard
+    borderRadius: 16, // Add border radius like BrandCard
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    shadowColor: colors.primary.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
+    overflow: 'hidden', // Ensure gradient respects border radius
   },
-  headerContent: {
-    flexDirection: 'row',
+  content: {
+    paddingHorizontal: 16, // Match BrandCard padding
+    paddingVertical: 16,
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    justifyContent: 'center',
     minHeight: 44,
   },
-  backButton: {
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8,
-  },
   title: {
-    flex: 1,
-    fontSize: 17,
-    fontWeight: '600',
+    ...typography.styles.brandName,
+    fontSize: Math.min(20, screenWidth * 0.05), // Responsive font size like BrandCard
+    fontWeight: '700',
     textAlign: 'center',
-    marginHorizontal: 8,
-  },
-  rightContainer: {
-    width: 40,
-    alignItems: 'flex-end',
+    color: colors.text.primary,
+    lineHeight: Math.min(24, screenWidth * 0.06), // Better line height for readability
+    paddingHorizontal: 8, // Prevent text from touching edges
   },
 });

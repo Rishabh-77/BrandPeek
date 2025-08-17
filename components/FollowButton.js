@@ -26,11 +26,6 @@ const FollowButton = ({
   const handlePressIn = () => {
     setIsPressed(true);
 
-    // Add haptic feedback when pressing down on the button
-    if (process.env.EXPO_OS === 'ios') {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-
     Animated.timing(scaleValue, {
       toValue: 0.95,
       duration: 100,
@@ -47,13 +42,23 @@ const FollowButton = ({
     }).start();
   };
 
-  const handlePress = () => {
+  const handlePress = async () => {
     if (disabled) return;
+
+    // Provide haptic feedback on button press
+    try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    } catch (error) {
+      // Haptic feedback not available on this device
+      if (__DEV__) {
+        console.log('Haptic feedback not available:', error);
+      }
+    }
 
     // Toggle follow state for visual feedback
     setIsFollowing(!isFollowing);
 
-    // Provide haptic feedback (if available)
+    // Call the onPress callback
     if (onPress) {
       onPress(!isFollowing);
     }

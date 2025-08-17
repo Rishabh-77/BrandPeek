@@ -69,6 +69,16 @@ const BrandList = ({
     [onBrandPress, testID]
   );
 
+  // Render list header
+  const renderListHeader = useCallback(
+    () => (
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerTitle}>Top 10 Brands</Text>
+      </View>
+    ),
+    []
+  );
+
   // Generate skeleton data for loading state
   const getSkeletonData = useCallback(() => {
     return Array.from({ length: SKELETON_COUNT }, (_, index) => ({
@@ -173,6 +183,7 @@ const BrandList = ({
       renderItem={renderBrandItem}
       keyExtractor={keyExtractor}
       getItemLayout={getItemLayout}
+      ListHeaderComponent={renderListHeader}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.listContainer}
       refreshControl={
@@ -205,8 +216,27 @@ const BrandList = ({
 const styles = StyleSheet.create({
   listContainer: {
     paddingVertical: 8,
-    paddingHorizontal: 10,
+    paddingHorizontal: 4, // Reduced to prevent double padding with cards
     flexGrow: 1,
+  },
+  headerContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 24,
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    minHeight: 60,
+  },
+  headerTitle: {
+    ...typography.styles.header,
+    fontSize: 22,
+    fontWeight: '700',
+    textAlign: 'center',
+    color: colors.text.primary,
+    lineHeight: 28,
+    marginBottom: 0,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
   },
 
   // Empty state styles

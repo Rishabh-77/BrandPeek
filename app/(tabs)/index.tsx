@@ -13,6 +13,7 @@ import GradientBackground from '@/components/GradientBackground';
 import BrandList from '@/components/BrandList';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorMessage from '@/components/ErrorMessage';
+import FloatingHeader from '@/components/FloatingHeader';
 import brandService from '@/services/brandService';
 import { typography } from '@/constants/typography';
 // import { colors } from '@/constants/colors';
@@ -46,20 +47,15 @@ export default function HomeScreen() {
       setError(null);
 
       if (__DEV__) {
-        console.log('[HomeScreen] Fetching brands...');
       }
 
       const brandsData = await brandService.getBrands();
       setBrands(brandsData);
 
       if (__DEV__) {
-        console.log(
-          `[HomeScreen] Successfully loaded ${brandsData.length} brands`
-        );
       }
     } catch (err) {
       if (__DEV__) {
-        console.error('[HomeScreen] Error fetching brands:', err);
       }
 
       const errorMessage =
@@ -134,9 +130,6 @@ export default function HomeScreen() {
             backgroundColor="transparent"
             translucent
           />
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>Top Brands Today</Text>
-          </View>
           <View style={styles.loadingContainer}>
             <LoadingSpinner size="large" />
             <Text style={styles.loadingText}>Loading brands...</Text>
@@ -156,9 +149,6 @@ export default function HomeScreen() {
             backgroundColor="transparent"
             translucent
           />
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>Top Brands Today</Text>
-          </View>
           <View style={styles.errorContainer}>
             <ErrorMessage
               message={error}
@@ -181,15 +171,7 @@ export default function HomeScreen() {
           translucent
         />
 
-        {/* Header Section */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Top Brands Today</Text>
-          {brands.length > 0 && (
-            <Text style={styles.headerSubtitle}>
-              Discover {brands.length} amazing brands
-            </Text>
-          )}
-        </View>
+        <FloatingHeader title="BrandPeek" />
 
         {/* Brand List Section */}
         <View style={styles.content}>
@@ -214,34 +196,11 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 24, // Increased top padding
-    paddingBottom: 32, // Increased bottom padding for more space
-    alignItems: 'center',
-  },
-  headerTitle: {
-    ...typography.styles.header,
-    fontSize: Math.min(28, Dimensions.get('window').width * 0.07), // Responsive font size
-    fontWeight: '700',
-    textAlign: 'center',
-    marginBottom: 16, // Increased spacing between title and subtitle
-    paddingHorizontal: 10, // Prevent text from touching edges
-    lineHeight: Math.min(34, Dimensions.get('window').width * 0.085), // Better line height
-  },
-  headerSubtitle: {
-    ...typography.styles.description,
-    fontSize: Math.min(16, Dimensions.get('window').width * 0.04), // Responsive font size
-    textAlign: 'center',
-    opacity: 0.8,
-    paddingHorizontal: 10, // Prevent text from touching edges
-    lineHeight: Math.min(22, Dimensions.get('window').width * 0.055), // Better line height
-    marginTop: 4, // Small top margin for better separation
-  },
+
   content: {
     flex: 1,
-    paddingHorizontal: Math.max(10, Dimensions.get('window').width * 0.025), // Responsive padding
-    paddingTop: 8, // Add top padding for separation from header
+    paddingHorizontal: 16, // Fixed padding for consistency
+    paddingTop: 80, // Increased padding to account for both floating header and brand list header
   },
   loadingContainer: {
     flex: 1,

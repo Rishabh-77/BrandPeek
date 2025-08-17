@@ -16,10 +16,9 @@ import { gradients } from '../constants/gradients';
 
 const { width: screenWidth } = Dimensions.get('window');
 
-// Calculate responsive card width accounting for parent container padding
-const PARENT_PADDING = 20; // BrandList paddingHorizontal (10) * 2
-const CARD_HORIZONTAL_MARGIN = 16; // Margin between cards
-const CARD_WIDTH = screenWidth - PARENT_PADDING - CARD_HORIZONTAL_MARGIN;
+// Calculate responsive card width with proper margins
+const CARD_MARGIN = 12; // Horizontal margin for each card
+const CARD_WIDTH = screenWidth - CARD_MARGIN * 2 - 32; // Account for container padding
 
 const BrandCard = ({ brand, onPress, testID }) => {
   const [imageLoading, setImageLoading] = useState(true);
@@ -153,7 +152,7 @@ const BrandCard = ({ brand, onPress, testID }) => {
 const styles = StyleSheet.create({
   container: {
     width: CARD_WIDTH,
-    marginHorizontal: 8,
+    marginHorizontal: CARD_MARGIN,
     marginVertical: 8,
     borderRadius: 16,
     overflow: 'hidden',
@@ -165,6 +164,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 8,
+    alignSelf: 'center',
   },
   containerPressed: {
     opacity: 0.7,
@@ -240,11 +240,12 @@ const styles = StyleSheet.create({
   // Loading skeleton styles
   skeletonContainer: {
     width: CARD_WIDTH,
-    marginHorizontal: 8,
+    marginHorizontal: CARD_MARGIN,
     marginVertical: 8,
     borderRadius: 16,
     overflow: 'hidden',
     height: 72, // Updated height to match content
+    alignSelf: 'center',
   },
   skeletonGradient: {
     flex: 1,
